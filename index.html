@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>GTO 翻前範圍工具</title>
+  <link rel="stylesheet" href="css/style.css?v=4" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">♠</span>
+      <div>
+        <h1>GTO 翻前範圍工具</h1>
+        <p class="tagline">Preflop Ranges &amp; Trainer · 現金局</p>
+      </div>
+    </div>
+    <div class="topbar-controls">
+      <div class="seg" id="formatToggle" role="tablist" aria-label="桌型">
+        <button data-format="6max" class="active">6-max</button>
+        <button data-format="9max">9-max</button>
+      </div>
+      <div class="seg" id="modeToggle" role="tablist" aria-label="模式">
+        <button data-mode="chart" class="active">範圍表</button>
+        <button data-mode="trainer">隨機練習</button>
+        <button data-mode="tool">Equity</button>
+        <button data-mode="postflop">翻後決策</button>
+        <button data-mode="solver">翻後 Solver</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="scenario-tabs" id="scenarioTabs">
+    <button data-scenario="rfi" class="active">RFI 開牌</button>
+    <button data-scenario="vsrfi">面對加注</button>
+    <button data-scenario="vs3bet">被 3-bet</button>
+  </div>
+
+  <!-- ======================= 範圍表模式 ======================= -->
+  <main id="chartView" class="view active">
+    <aside class="sidebar">
+      <h2 id="posHeading">位置</h2>
+      <div class="pos-list" id="posList"></div>
+      <div class="scenario-desc" id="scenarioDesc"></div>
+      <label class="edit-switch">
+        <input type="checkbox" id="editToggle" /> 編輯模式（點格子改動作）
+      </label>
+      <div id="editPanel" class="edit-panel hidden">
+        <p>動作筆刷：</p>
+        <div class="brush-list" id="brushList"></div>
+        <p>權重（混合頻率）：</p>
+        <div class="brush-list" id="brushWeights"></div>
+        <button id="exportBtn" class="btn">匯出此範圍 JSON</button>
+        <button id="resetBtn" class="btn">還原此範圍</button>
+      </div>
+    </aside>
+
+    <section class="chart-area">
+      <div class="chart-header">
+        <h2 id="spotTitle">—</h2>
+        <div class="view-toggle seg">
+          <button data-chartmode="grid" class="active">網格</button>
+          <button data-chartmode="list">條列</button>
+        </div>
+      </div>
+
+      <div id="gridWrap" class="grid-wrap">
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <div id="listWrap" class="list-wrap hidden"></div>
+
+      <div class="legend" id="legend"></div>
+      <div class="coverage" id="coverage"></div>
+    </section>
+  </main>
+
+  <!-- ======================= 練習模式 ======================= -->
+  <main id="trainerView" class="view">
+    <aside class="sidebar">
+      <h2>練習設定</h2>
+      <p class="hint">選要練哪些位置：</p>
+      <div class="pos-check" id="posCheck"></div>
+      <button id="startTrainer" class="btn primary">開始 / 重新開始</button>
+      <button id="timedChallenge" class="btn">⏱ 限時 60 秒挑戰</button>
+      <button id="reviewMistakes" class="btn">複習錯題 (0)</button>
+      <p class="hint kbd-hint">快捷鍵：<b>1 2 3</b> 選動作 · <b>空白鍵</b> 下一題</p>
+      <div class="stats" id="trainerStats"></div>
+    </aside>
+
+    <section class="trainer-area">
+      <div id="quizCard" class="quiz-card">
+        <div id="quizTimer" class="quiz-timer hidden"></div>
+        <p class="quiz-context" id="quizContext">按「開始」出題</p>
+        <div class="cards" id="quizCards"></div>
+        <div class="quiz-actions" id="quizActions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <div class="quiz-mini" id="quizMini"></div>
+        <button id="nextQuiz" class="btn hidden">下一題 →</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= Equity 計算器 ======================= -->
+  <main id="toolView" class="view">
+    <aside class="sidebar">
+      <h2>Equity 計算器</h2>
+      <p class="hint">兩個範圍全下對決的翻前勝率。輸入單手（如 <code>AA</code>）或範圍（如 <code>QQ+, AKs</code>）。用蒙地卡羅抽樣，樣本越多越準。</p>
+      <div class="eq-presets">
+        <p class="hint">快速範例：</p>
+        <button class="btn small" data-ex="AA|KK">AA vs KK</button>
+        <button class="btn small" data-ex="AKs|QQ">AKs vs QQ</button>
+        <button class="btn small" data-ex="AA|QQ+, AKs">AA vs 頂級範圍</button>
+      </div>
+    </aside>
+    <section class="tool-area">
+      <div class="eq-inputs">
+        <div class="eq-side">
+          <label>範圍 A</label>
+          <textarea id="eqA" rows="2">AA</textarea>
+          <div class="eq-meta" id="eqAMeta"></div>
+          <button class="btn small" data-load="A">← 載入目前圖表範圍</button>
+        </div>
+        <div class="eq-vs">VS</div>
+        <div class="eq-side">
+          <label>範圍 B</label>
+          <textarea id="eqB" rows="2">QQ+, AKs</textarea>
+          <div class="eq-meta" id="eqBMeta"></div>
+          <button class="btn small" data-load="B">← 載入目前圖表範圍</button>
+        </div>
+      </div>
+      <div class="eq-controls">
+        <label>公牌（選填）
+          <input id="eqBoard" type="text" placeholder="如 AsKd7h" size="10" autocomplete="off" />
+        </label>
+        <div class="seg" id="eqMode">
+          <button data-eqmode="bar" class="active">範圍對決</button>
+          <button data-eqmode="heat">逐手熱圖</button>
+        </div>
+        <label>樣本數
+          <select id="eqIters">
+            <option value="5000">5,000（快）</option>
+            <option value="20000" selected>20,000（準）</option>
+            <option value="80000">80,000（很準／較慢）</option>
+          </select>
+        </label>
+        <button id="eqRun" class="btn primary">計算 Equity</button>
+      </div>
+      <div id="eqBoardShow" class="eq-board"></div>
+      <div id="eqResult" class="eq-result"></div>
+    </section>
+  </main>
+
+  <!-- ======================= 翻後決策（啟發式）======================= -->
+  <main id="postflopView" class="view">
+    <aside class="sidebar">
+      <h2>翻後情境</h2>
+      <label class="pf-label">你的角色</label>
+      <div class="seg pf-seg" id="pfRole"><button data-v="PFR" class="active">翻前加注者</button><button data-v="caller">跟注者</button></div>
+      <label class="pf-label">相對位置</label>
+      <div class="seg pf-seg" id="pfPos"><button data-v="IP" class="active">有利 IP</button><button data-v="OOP">不利 OOP</button></div>
+      <label class="pf-label">底池人數</label>
+      <div class="seg pf-seg" id="pfPlayers"><button data-v="2" class="active">單挑</button><button data-v="3">3 人</button><button data-v="4">4 人+</button></div>
+      <label class="pf-label">你的手牌</label>
+      <input id="pfHand" class="pf-input" placeholder="如 AhKs" autocomplete="off" />
+      <label class="pf-label">公牌（翻/轉/河）</label>
+      <input id="pfBoard" class="pf-input" placeholder="如 Kd7c2h" autocomplete="off" />
+      <label class="pf-label">對手範圍（可改）</label>
+      <textarea id="pfVillain" class="pf-input" rows="2">22+, A2s+, K9s+, Q9s+, J9s+, T9s, 98s, 87s, ATo+, KJo+</textarea>
+      <button id="pfAnalyze" class="btn primary">分析</button>
+      <button id="pfRandom" class="btn">🎲 隨機情境練習</button>
+    </aside>
+    <section class="pf-area">
+      <div id="pfResult" class="pf-result"><p class="hint">選好角色/位置/人數，填入你的手牌與公牌，按「分析」。或按「🎲 隨機情境練習」讓系統出題。</p></div>
+    </section>
+  </main>
+
+  <!-- ======================= 翻後 Solver（嵌入開源 wasm-postflop）======================= -->
+  <main id="solverView" class="view solver-view">
+    <div class="solver-intro">
+      <div>
+        <h2>翻後 GTO Solver <span class="badge">真求解器</span></h2>
+        <p>下方嵌入的是開源專案 <b>WASM Postflop</b>（作者 b-inary）——真正用 <b>Discounted CFR</b> 演算法在你瀏覽器裡即時求解翻後策略的 solver。設定雙方範圍、牌面、下注尺寸後按 Run，就能看到策略/EV/equity。與本工具左邊的「翻後決策」互補：那邊是快速的原則建議，這邊是精確求解。</p>
+      </div>
+      <div class="solver-actions">
+        <a href="https://wasm-postflop.pages.dev/" target="_blank" rel="noopener" class="btn primary">↗ 新分頁開啟</a>
+        <span class="solver-credit">開源 · AGPL-3.0 · <a href="https://github.com/b-inary/wasm-postflop" target="_blank" rel="noopener">github.com/b-inary/wasm-postflop</a></span>
+      </div>
+    </div>
+    <div class="solver-frame-wrap">
+      <iframe id="solverFrame" data-src="https://wasm-postflop.pages.dev/" title="WASM Postflop Solver" loading="lazy"></iframe>
+    </div>
+  </main>
+
+  <footer class="foot">
+    資料：9-max 來自 PokerCoaching 100bb 圖表（使用者提供）；6-max 為標準 solver 基準範圍。
+    顏色與版面參考 GTOwizard。這是學習用起點，實戰請依對手調整。
+  </footer>
+
+  <script src="js/hands.js?v=4"></script>
+  <script src="js/eval.js?v=4"></script>
+  <script src="js/postflop.js?v=4"></script>
+  <script src="js/ranges.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
+</body>
+</html>

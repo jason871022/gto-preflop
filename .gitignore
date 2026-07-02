@@ -1,0 +1,9 @@
+# 系統/編輯器
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# 開發預覽用（本機伺服器設定，不需上 GitHub）
+.claude/
