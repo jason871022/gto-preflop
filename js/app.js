@@ -18,7 +18,7 @@
     editing: false, brush: 'R', brushWeight: 1,
     overrides: {}   // "format|scenario|spotKey" -> { hand: {act:w} }
   };
-  var trainer = { keys: [], total: 0, correct: 0, streak: 0, best: 0, current: null, answered: false, mistakes: [], reviewMode: false, timed: false, timeLeft: 0, timerId: null };
+  var trainer = { keys: [], total: 0, correct: 0, streak: 0, best: 0, current: null, answered: false, mistakes: [], reviewMode: false, timed: false, timeLeft: 0, timerId: null, mixAll: false };
 
   // ---------- 資料存取 ----------
   function scen() { return DATA.SCENARIOS[state.scenario]; }
@@ -329,27 +329,36 @@
 
   function nextQuestion() {
     if (trainer.timed && trainer.timeLeft <= 0) return;
-    var key, hand;
+    var scId, key, hand;
     if (trainer.reviewMode) {
       var pool = mistakePool();
       if (!pool.length) { trainer.reviewMode = false; document.getElementById('quizContext').textContent = '錯題都複習完了！按「開始」繼續一般練習。'; document.getElementById('quizActions').innerHTML = ''; document.getElementById('quizCards').innerHTML = ''; document.getElementById('nextQuiz').classList.add('hidden'); return; }
       var m = pool[Math.floor(Math.random() * pool.length)];
-      key = m.key; hand = m.hand;
+      scId = m.scenario || state.scenario; key = m.key; hand = m.hand;
+    } else if (trainer.mixAll) {
+      // 混合三情境：每題隨機挑情境 → 對戰組 → 手牌
+      var scs = ['rfi', 'vsrfi', 'vs3bet'];
+      scId = scs[Math.floor(Math.random() * scs.length)];
+      var ks = DATA.keysOf(scId, state.format);
+      key = ks[Math.floor(Math.random() * ks.length)];
+      hand = weightedHand();
     } else {
+      scId = state.scenario;
       key = trainer.keys[Math.floor(Math.random() * trainer.keys.length)];
       hand = weightedHand();
     }
-    var spot = spotOf(key), map = buildMapFrom(spot, null);
-    trainer.current = { key: key, spot: spot, map: map, hand: hand, correct: topAction(map[hand] || {}) };
+    var spot = DATA.SCENARIOS[scId].data[state.format][key], map = buildMapFrom(spot, null);
+    trainer.current = { sc: scId, key: key, spot: spot, map: map, hand: hand, correct: topAction(map[hand] || {}) };
     trainer.answered = false;
     renderQuestion();
   }
 
   function renderQuestion() {
-    var q = trainer.current;
-    document.getElementById('quizContext').textContent = state.scenario === 'rfi'
-      ? '你在 ' + q.key + '（' + state.format + '），前面都蓋牌。手牌如下，你要怎麼做？'
-      : q.key + '（' + state.format + '）。' + scen().desc;
+    var q = trainer.current, sd = DATA.SCENARIOS[q.sc];
+    var tag = trainer.mixAll ? '【' + sd.name.split('（')[0] + '】 ' : '';
+    document.getElementById('quizContext').textContent = q.sc === 'rfi'
+      ? tag + '你在 ' + q.key + '（' + state.format + '），前面都蓋牌。手牌如下，你要怎麼做？'
+      : tag + q.key + '（' + state.format + '）。' + sd.desc;
     renderCards(q.hand);
     var fb = document.getElementById('quizFeedback');
     fb.textContent = ''; fb.className = 'quiz-feedback';
@@ -357,7 +366,7 @@
     document.getElementById('nextQuiz').classList.add('hidden');
     var box = document.getElementById('quizActions');
     box.innerHTML = '';
-    scen().buttons.forEach(function (btn, i) {
+    sd.buttons.forEach(function (btn, i) {
       var b = el('button', '', btn.label + '<span class="k">[' + (i + 1) + ']</span>');
       b.style.borderColor = btn.color; b.dataset.id = btn.id;
       b.onclick = function () { answer(btn); };
@@ -382,14 +391,14 @@
   function answer(btn) {
     if (trainer.answered) return;
     trainer.answered = true;
-    var q = trainer.current, ok = btn.matches.indexOf(q.correct) !== -1;
+    var q = trainer.current, sd = DATA.SCENARIOS[q.sc], ok = btn.matches.indexOf(q.correct) !== -1;
     trainer.total++;
-    var mEntry = { format: state.format, scenario: state.scenario, key: q.key, hand: q.hand, correct: q.correct };
+    var mEntry = { format: state.format, scenario: q.sc, key: q.key, hand: q.hand, correct: q.correct };
     if (ok) { trainer.correct++; trainer.streak++; trainer.best = Math.max(trainer.best, trainer.streak); if (trainer.reviewMode) removeMistake(mEntry); }
     else { trainer.streak = 0; addMistake(mEntry); }
     Array.prototype.forEach.call(document.querySelectorAll('#quizActions button'), function (b) {
       b.disabled = true;
-      var bd = scen().buttons.filter(function (x) { return x.id === b.dataset.id; })[0];
+      var bd = sd.buttons.filter(function (x) { return x.id === b.dataset.id; })[0];
       if (bd && bd.matches.indexOf(q.correct) !== -1) b.style.background = bd.color;
     });
     var fb = document.getElementById('quizFeedback');
@@ -731,6 +740,11 @@
     };
     document.getElementById('exportBtn').onclick = exportRange;
     document.getElementById('resetBtn').onclick = resetSpot;
+    document.getElementById('mixAll').onchange = function (e) {
+      trainer.mixAll = e.target.checked;
+      document.getElementById('posCheck').classList.toggle('dim', trainer.mixAll);
+      document.querySelectorAll('#posCheck input').forEach(function (i) { i.disabled = trainer.mixAll; });
+    };
     document.getElementById('startTrainer').onclick = startTrainer;
     document.getElementById('timedChallenge').onclick = startTimed;
     document.getElementById('reviewMistakes').onclick = startReview;

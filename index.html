@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>德州撲克 GTO 練習助手</title>
-  <link rel="stylesheet" href="css/style.css?v=6" />
+  <link rel="stylesheet" href="css/style.css?v=7" />
 </head>
 <body>
   <header class="topbar">
@@ -79,7 +79,8 @@
   <main id="trainerView" class="view">
     <aside class="sidebar">
       <h2>練習設定</h2>
-      <p class="hint">選要練哪些位置：</p>
+      <label class="mix-toggle"><input type="checkbox" id="mixAll" /> <span>混合全部情境出題<em>RFI ＋ 面對加注 ＋ 被 3-bet</em></span></label>
+      <p class="hint">選要練哪些位置（混合模式下略過此設定）：</p>
       <div class="pos-check" id="posCheck"></div>
       <button id="startTrainer" class="btn primary">開始 / 重新開始</button>
       <button id="timedChallenge" class="btn">⏱ 限時 60 秒挑戰</button>
@@ -182,10 +183,10 @@
     顏色與版面參考 GTOwizard。這是學習用起點，實戰請依對手調整。
   </footer>
 
-  <script src="js/hands.js?v=6"></script>
-  <script src="js/eval.js?v=6"></script>
-  <script src="js/postflop.js?v=6"></script>
-  <script src="js/ranges.js?v=6"></script>
-  <script src="js/app.js?v=6"></script>
+  <script src="js/hands.js?v=7"></script>
+  <script src="js/eval.js?v=7"></script>
+  <script src="js/postflop.js?v=7"></script>
+  <script src="js/ranges.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>

@@ -151,7 +151,10 @@ body {
 .chip .wt { color: var(--accent); font-size: 10px; }
 
 /* ---------- 練習模式 ---------- */
+.mix-toggle { display: flex; align-items: center; gap: 8px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; cursor: pointer; margin-bottom: 12px; font-size: 13px; font-weight: 600; }
+.mix-toggle em { display: block; font-style: normal; font-weight: 400; font-size: 11px; color: var(--muted); margin-top: 2px; }
 .pos-check { display: grid; gap: 6px; margin-bottom: 14px; }
+.pos-check.dim { opacity: .4; pointer-events: none; }
 .pos-check label { display: flex; align-items: center; gap: 8px; font-size: 13px; background: var(--panel-2); padding: 7px 10px; border-radius: 7px; cursor: pointer; }
 .btn { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 9px 14px; cursor: pointer; font-weight: 600; font-size: 13px; }
 .btn:hover { border-color: var(--accent); }
