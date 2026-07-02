@@ -614,6 +614,8 @@
     var fmt = function (c) { return window.Postflop.RNAME[c % 13] + 'shdc'[(c / 13) | 0]; };
     document.getElementById('pfHand').value = hand.map(fmt).join('');
     document.getElementById('pfBoard').value = board.map(fmt).join('');
+    syncPicksFromText('pfHand', 'pfHandPick');
+    syncPicksFromText('pfBoard', 'pfBoardPick');
     // 隨機情境設定
     var roles = ['PFR', 'caller'], poss = ['IP', 'OOP'], pls = [2, 2, 2, 3, 4];
     setPfSeg('pfRole', roles[(Math.random() * 2) | 0]);
@@ -630,12 +632,54 @@
     });
   }
 
+  // 卡牌下拉選擇器（數字 + 花色分開選），與文字框雙向同步。
+  function cardSelect() {
+    var span = el('span', 'csel');
+    var rk = document.createElement('select'); rk.className = 'rank';
+    rk.appendChild(new Option('—', ''));
+    ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'].forEach(function (r) { rk.appendChild(new Option(r, r)); });
+    var su = document.createElement('select'); su.className = 'suit';
+    su.appendChild(new Option('—', ''));
+    [['s', '♠'], ['h', '♥'], ['d', '♦'], ['c', '♣']].forEach(function (p) { su.appendChild(new Option(p[1], p[0])); });
+    span.appendChild(rk); span.appendChild(su);
+    return span;
+  }
+  function buildCardPickers() {
+    var hp = document.getElementById('pfHandPick'), bp = document.getElementById('pfBoardPick');
+    hp.innerHTML = ''; bp.innerHTML = '';
+    var i;
+    for (i = 0; i < 2; i++) hp.appendChild(cardSelect());
+    for (i = 0; i < 5; i++) bp.appendChild(cardSelect());
+    hp.addEventListener('change', function () { syncTextFromPicks('pfHandPick', 'pfHand'); });
+    bp.addEventListener('change', function () { syncTextFromPicks('pfBoardPick', 'pfBoard'); });
+    document.getElementById('pfHand').addEventListener('input', function () { syncPicksFromText('pfHand', 'pfHandPick'); });
+    document.getElementById('pfBoard').addEventListener('input', function () { syncPicksFromText('pfBoard', 'pfBoardPick'); });
+  }
+  function syncTextFromPicks(pickId, inputId) {
+    var toks = [];
+    document.querySelectorAll('#' + pickId + ' .csel').forEach(function (c) {
+      var r = c.querySelector('.rank').value, s = c.querySelector('.suit').value;
+      if (r && s) toks.push(r + s);
+    });
+    document.getElementById(inputId).value = toks.join('');
+  }
+  function syncPicksFromText(inputId, pickId) {
+    var text = document.getElementById(inputId).value;
+    var toks = text.replace(/[^AKQJT2-9shdc]/gi, '').match(/([AKQJT2-9])([shdc])/gi) || [];
+    document.querySelectorAll('#' + pickId + ' .csel').forEach(function (c, i) {
+      var r = c.querySelector('.rank'), s = c.querySelector('.suit');
+      if (toks[i]) { r.value = toks[i][0].toUpperCase(); s.value = toks[i][1].toLowerCase(); }
+      else { r.value = ''; s.value = ''; }
+    });
+  }
+
   function bindPostflop() {
     ['pfRole', 'pfPos', 'pfPlayers'].forEach(function (id) {
       document.querySelectorAll('#' + id + ' button').forEach(function (b) {
         b.onclick = function () { setPfSeg(id, b.dataset.v); };
       });
     });
+    buildCardPickers();
     document.getElementById('pfAnalyze').onclick = function () { analyzePostflop(true); };
     document.getElementById('pfRandom').onclick = randomPostflop;
   }
@@ -667,11 +711,7 @@
       b.onclick = function () {
         setSeg('#modeToggle', b); state.mode = b.dataset.mode;
         if (state.mode !== 'trainer') { stopTimer(); document.getElementById('quizTimer').classList.add('hidden'); }
-        if (state.mode === 'solver') {
-          var fr = document.getElementById('solverFrame');
-          if (!fr.src && fr.dataset.src) fr.src = fr.dataset.src; // 首次開啟才載入(避免拖慢啟動)
-        }
-        ['chart', 'trainer', 'tool', 'postflop', 'solver'].forEach(function (m) {
+        ['chart', 'trainer', 'tool', 'postflop'].forEach(function (m) {
           document.getElementById(m + 'View').classList.toggle('active', state.mode === m);
         });
       };

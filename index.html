@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <title>GTO 翻前範圍工具</title>
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <title>德州撲克 GTO 練習助手</title>
+  <link rel="stylesheet" href="css/style.css?v=5" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
       <span class="logo">♠</span>
       <div>
-        <h1>GTO 翻前範圍工具</h1>
-        <p class="tagline">Preflop Ranges &amp; Trainer · 現金局</p>
+        <h1>德州撲克 GTO 練習助手</h1>
+        <p class="tagline">翻前範圍 · 翻後決策 · Equity · 練習器</p>
       </div>
     </div>
     <div class="topbar-controls">
@@ -26,7 +26,6 @@
         <button data-mode="trainer">隨機練習</button>
         <button data-mode="tool">Equity</button>
         <button data-mode="postflop">翻後決策</button>
-        <button data-mode="solver">翻後 Solver</button>
       </div>
     </div>
   </header>
@@ -162,10 +161,12 @@
       <div class="seg pf-seg" id="pfPos"><button data-v="IP" class="active">有利 IP</button><button data-v="OOP">不利 OOP</button></div>
       <label class="pf-label">底池人數</label>
       <div class="seg pf-seg" id="pfPlayers"><button data-v="2" class="active">單挑</button><button data-v="3">3 人</button><button data-v="4">4 人+</button></div>
-      <label class="pf-label">你的手牌</label>
+      <label class="pf-label">你的手牌（下拉選 或 直接打字）</label>
       <input id="pfHand" class="pf-input" placeholder="如 AhKs" autocomplete="off" />
-      <label class="pf-label">公牌（翻/轉/河）</label>
+      <div class="card-pick" id="pfHandPick"></div>
+      <label class="pf-label">公牌 翻/轉/河（下拉選 或 打字）</label>
       <input id="pfBoard" class="pf-input" placeholder="如 Kd7c2h" autocomplete="off" />
+      <div class="card-pick" id="pfBoardPick"></div>
       <label class="pf-label">對手範圍（可改）</label>
       <textarea id="pfVillain" class="pf-input" rows="2">22+, A2s+, K9s+, Q9s+, J9s+, T9s, 98s, 87s, ATo+, KJo+</textarea>
       <button id="pfAnalyze" class="btn primary">分析</button>
@@ -176,32 +177,15 @@
     </section>
   </main>
 
-  <!-- ======================= 翻後 Solver（嵌入開源 wasm-postflop）======================= -->
-  <main id="solverView" class="view solver-view">
-    <div class="solver-intro">
-      <div>
-        <h2>翻後 GTO Solver <span class="badge">真求解器</span></h2>
-        <p>下方嵌入的是開源專案 <b>WASM Postflop</b>（作者 b-inary）——真正用 <b>Discounted CFR</b> 演算法在你瀏覽器裡即時求解翻後策略的 solver。設定雙方範圍、牌面、下注尺寸後按 Run，就能看到策略/EV/equity。與本工具左邊的「翻後決策」互補：那邊是快速的原則建議，這邊是精確求解。</p>
-      </div>
-      <div class="solver-actions">
-        <a href="https://wasm-postflop.pages.dev/" target="_blank" rel="noopener" class="btn primary">↗ 新分頁開啟</a>
-        <span class="solver-credit">開源 · AGPL-3.0 · <a href="https://github.com/b-inary/wasm-postflop" target="_blank" rel="noopener">github.com/b-inary/wasm-postflop</a></span>
-      </div>
-    </div>
-    <div class="solver-frame-wrap">
-      <iframe id="solverFrame" data-src="https://wasm-postflop.pages.dev/" title="WASM Postflop Solver" loading="lazy"></iframe>
-    </div>
-  </main>
-
   <footer class="foot">
     資料：9-max 來自 PokerCoaching 100bb 圖表（使用者提供）；6-max 為標準 solver 基準範圍。
     顏色與版面參考 GTOwizard。這是學習用起點，實戰請依對手調整。
   </footer>
 
-  <script src="js/hands.js?v=4"></script>
-  <script src="js/eval.js?v=4"></script>
-  <script src="js/postflop.js?v=4"></script>
-  <script src="js/ranges.js?v=4"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/hands.js?v=5"></script>
+  <script src="js/eval.js?v=5"></script>
+  <script src="js/postflop.js?v=5"></script>
+  <script src="js/ranges.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>
