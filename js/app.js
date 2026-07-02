@@ -412,7 +412,7 @@
     for (var r = 0; r < 13; r++) {
       for (var c = 0; c < 13; c++) {
         var hand = H.handAt(r, c), act = topAction(q.map[hand] || {});
-        var m = el('div', 'm' + (hand === q.hand ? ' hl' : ''));
+        var m = el('div', 'm' + (hand === q.hand ? ' hl' : ''), hand);
         m.style.background = ACT[act].color;
         box.appendChild(m);
       }

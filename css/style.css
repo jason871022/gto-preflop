@@ -186,9 +186,9 @@ body {
 .quiz-feedback { min-height: 48px; font-size: 15px; font-weight: 600; }
 .quiz-feedback.correct { color: var(--limp); }
 .quiz-feedback.wrong { color: var(--raise); }
-.quiz-mini { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; max-width: 320px; margin: 10px auto 16px; }
-.quiz-mini .m { aspect-ratio: 1/1; border-radius: 2px; background: var(--fold); position: relative; }
-.quiz-mini .m.hl { outline: 2px solid #fff; z-index: 1; }
+.quiz-mini { display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; max-width: 390px; margin: 10px auto 16px; }
+.quiz-mini .m { aspect-ratio: 1/1; border-radius: 2px; background: var(--fold); position: relative; display: grid; place-items: center; font-size: clamp(5px, 1.5vw, 8px); font-weight: 700; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.6); overflow: hidden; line-height: 1; }
+.quiz-mini .m.hl { outline: 2px solid #fff; z-index: 1; font-size: clamp(6px, 1.7vw, 9px); }
 
 /* ---------- Equity 計算器 ---------- */
 .tool-area { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
