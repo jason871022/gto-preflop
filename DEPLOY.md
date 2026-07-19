@@ -106,8 +106,8 @@ cd gto-preflop
 #   （目前是 v=8，下次改成 v=9，再下次 v=10…）
 #   可用這行一次全換（macOS）：
 sed -i '' 's/?v=8/?v=9/g' index.html
-# timer.html 的 css/js 有自己的 ?v=N（目前 v=3），改到計時器相關檔案時同樣 +1：
-sed -i '' 's/?v=3/?v=4/g' timer.html
+# timer.html 的 css/js 有自己的 ?v=N（目前 v=4），改到計時器相關檔案時同樣 +1：
+sed -i '' 's/?v=4/?v=5/g' timer.html
 
 git add -A
 git commit -m "說明這次改了什麼"

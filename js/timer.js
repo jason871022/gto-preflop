@@ -76,7 +76,7 @@
 
   /* ---------------- 狀態 ---------------- */
   function defaultState() {
-    const levels = TEMPLATES.std();
+    const levels = TEMPLATES.std.make();
     return {
       cfg: {
         buyin: 100, fee: 0, startChips: 10000,
