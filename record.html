@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>手牌記錄器 — 德州撲克 GTO 練習助手</title>
+  <link rel="stylesheet" href="css/record.css?v=1" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a class="back" href="index.html" title="回 GTO 練習助手">←</a>
+      <span class="logo">✍️</span>
+      <div>
+        <h1>手牌記錄器</h1>
+        <p class="tagline">快速記錄 · GTO 對照 · 復盤</p>
+      </div>
+    </div>
+    <div class="topbar-controls">
+      <button id="exportCsvBtn" class="btn">匯出 CSV</button>
+      <button id="clearBtn" class="btn danger">清空全部</button>
+    </div>
+  </header>
+
+  <main class="rec-layout">
+
+    <!-- ============ 輸入卡 ============ -->
+    <section class="input-card">
+      <div class="step">
+        <div class="step-head"><span class="sec-label">1 · 手牌</span><b id="handShow" class="hand-show">—</b></div>
+        <div class="mini-grid" id="handGrid"></div>
+        <input id="exactIn" class="txt-in" placeholder="精確牌面（選填）如 AhKs" autocomplete="off" />
+      </div>
+
+      <div class="step">
+        <div class="step-head">
+          <span class="sec-label">2 · 位置</span>
+          <div class="seg small-seg" id="fmtSeg">
+            <button data-fmt="6max" class="active">6-max</button>
+            <button data-fmt="9max">9-max</button>
+          </div>
+        </div>
+        <div class="chip-row" id="posRow"></div>
+      </div>
+
+      <div class="step">
+        <span class="sec-label">3 · 情境</span>
+        <div class="chip-row" id="scenRow"></div>
+        <div id="vsWrap" class="vs-wrap hidden">
+          <span class="sec-label">加注者位置</span>
+          <div class="chip-row" id="vsRow"></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <span class="sec-label">4 · 我的動作</span>
+        <div class="chip-row" id="actRow"></div>
+        <div id="gtoHint" class="gto-hint hidden"></div>
+      </div>
+
+      <div class="step">
+        <span class="sec-label">5 · 結果（選填）</span>
+        <div class="result-row">
+          <div class="seg" id="resultSeg">
+            <button data-r="win">✅ 贏</button>
+            <button data-r="lose">❌ 輸</button>
+            <button data-r="none" class="active">— 沒攤牌</button>
+          </div>
+          <label class="bb-label">±BB <input id="bbIn" class="txt-in bb-in" type="number" step="0.5" inputmode="decimal" placeholder="0" /></label>
+        </div>
+      </div>
+
+      <details class="step more">
+        <summary class="sec-label">更多（公牌 / 備註）</summary>
+        <input id="boardIn" class="txt-in" placeholder="公牌 如 Kd7c2h" autocomplete="off" />
+        <textarea id="noteIn" class="txt-in" rows="2" placeholder="備註：對手類型、下注尺寸、當時想法…"></textarea>
+      </details>
+
+      <button id="saveBtn" class="save-btn">💾 記錄這手</button>
+      <div id="toast" class="toast hidden"></div>
+    </section>
+
+    <!-- ============ 記錄列表 ============ -->
+    <section class="log-panel">
+      <div class="log-head">
+        <h2>已記錄</h2>
+        <div class="seg small-seg" id="filterSeg">
+          <button data-f="all" class="active">全部</button>
+          <button data-f="today">今天</button>
+          <button data-f="gtoX">GTO✗</button>
+        </div>
+      </div>
+      <div class="stats-row" id="statsRow"></div>
+      <div class="log-list" id="logList"></div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    紀錄存在這台裝置的瀏覽器（localStorage）。要備份或到電腦上分析請用「匯出 CSV」。
+  </footer>
+
+  <script src="js/hands.js?v=8"></script>
+  <script src="js/ranges.js?v=8"></script>
+  <script src="js/record.js?v=1"></script>
+</body>
+</html>

@@ -15,14 +15,17 @@
 gto-preflop/
 ├── index.html                 # 主頁面（五個模式的版面）
 ├── timer.html                 # 錦標賽計時器（獨立頁面，網址 /timer.html）
+├── record.html                # 手牌記錄器（獨立頁面，網址 /record.html）
 ├── css/style.css              # 深色主題 + 手機自適應
 ├── css/timer.css              # 計時器頁面樣式
+├── css/record.css             # 手牌記錄器樣式
 ├── js/
 │   ├── hands.js               # 手牌網格 + 範圍字串解析器
 │   ├── eval.js                # 7 張牌力評估 + 蒙地卡羅 equity
 │   ├── postflop.js            # 啟發式翻後分析
 │   ├── ranges.js              # 全部範圍資料
 │   ├── timer.js               # 錦標賽計時器邏輯
+│   ├── record.js              # 手牌記錄器邏輯
 │   └── app.js                 # 介面邏輯
 ├── .github/workflows/deploy.yml  # ★ GitHub Pages 自動部署工作流程
 ├── README.md
@@ -108,6 +111,7 @@ cd gto-preflop
 sed -i '' 's/?v=8/?v=9/g' index.html
 # timer.html 的 css/js 有自己的 ?v=N（目前 v=4），改到計時器相關檔案時同樣 +1：
 sed -i '' 's/?v=4/?v=5/g' timer.html
+# record.html 同理（record.css/record.js 目前 v=1；它引用的 hands.js/ranges.js 跟著 index 的版號）
 
 git add -A
 git commit -m "說明這次改了什麼"

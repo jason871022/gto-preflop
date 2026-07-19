@@ -15,6 +15,7 @@
 | **Equity** | 範圍 vs 範圍勝率（蒙地卡羅）、**逐手熱圖**、可**指定公牌**算翻後 equity |
 | **翻後決策** | 選角色/位置/人數 + 手牌 + 公牌（下拉選或打字）→ 牌面材質、成手/聽牌判斷、equity、啟發式下注/過牌建議（附「隨機情境練習」） |
 | **錦標賽計時器** | 獨立頁面 [`timer.html`](timer.html)：盲注結構編輯器（模板/休息）、大字倒數＋升盲音效、玩家/重買/加碼計數、獎池與名次分配計算、平均籌碼、手機亮屏鎖定，狀態存 localStorage |
+| **手牌記錄器** | 獨立頁面 [`record.html`](record.html)：手機快速記錄實戰手牌（13×13 快選＋大按鈕），**自動對照翻前 GTO 範圍**標示打法是否一致，統計淨 BB 與 GTO 符合率，可篩選複盤、匯出 CSV |
 
 ---
 
@@ -72,14 +73,17 @@ git push -u origin main
 gto-preflop/
 ├── index.html          # 版面與五個模式
 ├── timer.html          # 錦標賽計時器（獨立頁面）
+├── record.html         # 手牌記錄器（獨立頁面）
 ├── css/style.css       # GTOwizard 風格深色主題 + 手機自適應
 ├── css/timer.css       # 計時器頁面樣式
+├── css/record.css      # 手牌記錄器樣式
 └── js/
     ├── hands.js        # 手牌網格 + 範圍字串解析器（"22+, ATs+, KQo"）
     ├── eval.js         # 7 張牌力評估 + 蒙地卡羅 equity
     ├── postflop.js     # 啟發式翻後分析（牌面材質/成手/決策）
     ├── ranges.js       # 全部範圍資料（可編輯校正）
     ├── timer.js        # 錦標賽計時器邏輯（盲注時鐘/計分/獎池）
+    ├── record.js       # 手牌記錄器邏輯（快速輸入/GTO 對照/CSV）
     └── app.js          # 介面邏輯
 ```
 
