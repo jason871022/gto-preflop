@@ -52,6 +52,15 @@ body {
 .seg button:hover { color: var(--text); }
 .seg button.active { background: var(--accent); color: #1a1a1a; }
 
+/* 錦標賽計時器入口 */
+.timer-link {
+  display: inline-flex; align-items: center;
+  background: var(--panel-2); color: var(--accent); text-decoration: none;
+  border: 1px solid var(--line); border-radius: 9px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600;
+}
+.timer-link:hover { border-color: var(--accent); }
+
 /* ---------- 情境分頁 ---------- */
 .scenario-tabs {
   display: flex; gap: 6px; padding: 10px 20px 0;

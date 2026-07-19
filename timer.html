@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <title>錦標賽計時器 — 德州撲克 GTO 練習助手</title>
+  <link rel="stylesheet" href="css/timer.css?v=3" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a class="back" href="index.html" title="回 GTO 練習助手">←</a>
+      <span class="logo">⏱</span>
+      <div>
+        <h1>錦標賽計時器</h1>
+        <p class="tagline">盲注時鐘 · 玩家計分 · 獎池計算</p>
+      </div>
+    </div>
+    <div class="topbar-controls">
+      <label class="snd-toggle"><input type="checkbox" id="soundToggle" checked /> 🔔 音效</label>
+      <button id="resetAllBtn" class="btn danger">重設全部</button>
+    </div>
+  </header>
+
+  <main class="timer-layout">
+
+    <!-- ============ 時鐘主顯示 ============ -->
+    <section class="clock-panel" id="clockPanel">
+      <span class="suit-mark" aria-hidden="true">♠</span>
+      <button id="fsBtn" class="fs-btn" title="全螢幕">⛶</button>
+
+      <div class="level-name" id="lvlName">第 1 級</div>
+      <div class="big-time" id="bigTime">20:00</div>
+      <div class="lvl-progress"><div class="lvl-progress-fill" id="lvlProgress"></div></div>
+      <div class="big-blinds" id="bigBlinds">25 / 50</div>
+      <div class="ante-line" id="anteLine"></div>
+      <div class="next-line" id="nextLine"></div>
+
+      <div class="clock-controls">
+        <button id="btnPrev" class="cbtn" title="上一級">⏮</button>
+        <button id="btnMinus" class="cbtn" title="減 1 分鐘">−1分</button>
+        <button id="btnStart" class="cbtn primary">▶ 開始</button>
+        <button id="btnPlus" class="cbtn" title="加 1 分鐘">＋1分</button>
+        <button id="btnNext" class="cbtn" title="下一級">⏭</button>
+      </div>
+
+      <div class="stat-badges">
+        <div class="badge" id="wRemain"><span>剩餘玩家</span><b id="bRemain">—</b></div>
+        <div class="badge" id="wAvg"><span>平均籌碼</span><b id="bAvg">—</b></div>
+        <div class="badge" id="wPool"><span>獎池</span><b id="bPool">—</b></div>
+        <div class="badge" id="wBreak"><span>下次休息</span><b id="bBreak">—</b></div>
+      </div>
+    </section>
+
+    <!-- ============ 設定側欄 ============ -->
+    <aside class="setup-panel">
+
+      <details class="box">
+        <summary>🎨 外觀</summary>
+        <p class="sec-label">主題色</p>
+        <div class="swatches" id="swatches"></div>
+        <p class="sec-label">時鐘大小</p>
+        <div class="seg" id="scaleSeg">
+          <button data-s="0.85">小</button>
+          <button data-s="1" class="active">標準</button>
+          <button data-s="1.25">大</button>
+        </div>
+        <p class="sec-label">顯示項目</p>
+        <div class="show-list">
+          <label><input type="checkbox" data-show="next" checked /> 下一級預告</label>
+          <label><input type="checkbox" data-show="avg" checked /> 平均籌碼</label>
+          <label><input type="checkbox" data-show="pool" checked /> 獎池</label>
+          <label><input type="checkbox" data-show="brk" checked /> 下次休息</label>
+        </div>
+        <p class="hint">⛶ 可把時鐘放大成全螢幕，適合現場當大螢幕用。</p>
+      </details>
+
+      <details class="box" open>
+        <summary>👥 玩家與買入</summary>
+        <div class="cfg-grid">
+          <label>買入金額 <input type="number" id="cfgBuyin" min="0" inputmode="numeric" /></label>
+          <label>起始籌碼 <input type="number" id="cfgStartChips" min="0" inputmode="numeric" /></label>
+          <label>重買金額 <input type="number" id="cfgRebuyCost" min="0" inputmode="numeric" /></label>
+          <label>重買籌碼 <input type="number" id="cfgRebuyChips" min="0" inputmode="numeric" /></label>
+          <label>加碼金額 <input type="number" id="cfgAddonCost" min="0" inputmode="numeric" /></label>
+          <label>加碼籌碼 <input type="number" id="cfgAddonChips" min="0" inputmode="numeric" /></label>
+          <label>抽水 % <input type="number" id="cfgFee" min="0" max="100" inputmode="numeric" /></label>
+        </div>
+        <div class="counter-list">
+          <div class="counter"><span>總買入人次</span><div class="cbtns"><button data-cnt="entries" data-d="-1">−</button><b id="cEntries">0</b><button data-cnt="entries" data-d="1">＋</button></div></div>
+          <div class="counter"><span>剩餘玩家</span><div class="cbtns"><button data-cnt="remaining" data-d="-1">−</button><b id="cRemaining">0</b><button data-cnt="remaining" data-d="1">＋</button></div></div>
+          <div class="counter"><span>重買次數</span><div class="cbtns"><button data-cnt="rebuys" data-d="-1">−</button><b id="cRebuys">0</b><button data-cnt="rebuys" data-d="1">＋</button></div></div>
+          <div class="counter"><span>加碼次數</span><div class="cbtns"><button data-cnt="addons" data-d="-1">−</button><b id="cAddons">0</b><button data-cnt="addons" data-d="1">＋</button></div></div>
+        </div>
+        <p class="hint">玩家淘汰按「剩餘玩家 −」；有人重買記得剩餘玩家 ＋ 回來。</p>
+      </details>
+
+      <details class="box" open>
+        <summary>💰 獎池分配</summary>
+        <div class="pool-summary" id="poolSummary"></div>
+        <label class="inline-label">領獎名次
+          <select id="cfgPlaces">
+            <option value="1">1 名（贏家全拿）</option>
+            <option value="2">2 名</option>
+            <option value="3" selected>3 名</option>
+            <option value="4">4 名</option>
+            <option value="5">5 名</option>
+            <option value="6">6 名</option>
+          </select>
+        </label>
+        <div class="payout-edit" id="payoutEdit"></div>
+        <div class="payout-table" id="payoutTable"></div>
+      </details>
+
+      <details class="box">
+        <summary>🂠 盲注結構</summary>
+        <p class="sec-label">快速選擇結構</p>
+        <div class="tpl-row">
+          <select id="tplSelect" class="tpl-select"></select>
+          <button class="btn small" id="tplApply">套用</button>
+        </div>
+        <p class="hint" id="tplDesc"></p>
+        <div class="lvl-table-wrap">
+          <table class="lvl-table">
+            <thead><tr><th>#</th><th>SB</th><th>BB</th><th>前注</th><th>分鐘</th><th></th></tr></thead>
+            <tbody id="lvlBody"></tbody>
+          </table>
+        </div>
+        <div class="tpl-row">
+          <button class="btn small" id="addLevelBtn">＋ 加一級</button>
+          <button class="btn small" id="addBreakBtn">＋ 休息</button>
+        </div>
+        <p class="hint">改分鐘只影響之後進入的級別；點列首 # 可跳到該級。</p>
+      </details>
+
+    </aside>
+  </main>
+
+  <footer class="foot">
+    純本機運作，資料存在瀏覽器（localStorage），重新整理不會消失。手機可加到主畫面當 App 用。
+  </footer>
+
+  <script src="js/timer.js?v=3"></script>
+</body>
+</html>

@@ -14,12 +14,15 @@
 ```
 gto-preflop/
 ├── index.html                 # 主頁面（五個模式的版面）
+├── timer.html                 # 錦標賽計時器（獨立頁面，網址 /timer.html）
 ├── css/style.css              # 深色主題 + 手機自適應
+├── css/timer.css              # 計時器頁面樣式
 ├── js/
 │   ├── hands.js               # 手牌網格 + 範圍字串解析器
 │   ├── eval.js                # 7 張牌力評估 + 蒙地卡羅 equity
 │   ├── postflop.js            # 啟發式翻後分析
 │   ├── ranges.js              # 全部範圍資料
+│   ├── timer.js               # 錦標賽計時器邏輯
 │   └── app.js                 # 介面邏輯
 ├── .github/workflows/deploy.yml  # ★ GitHub Pages 自動部署工作流程
 ├── README.md
@@ -100,9 +103,11 @@ https://<新帳號>.github.io/gto-preflop/
 ```bash
 cd gto-preflop
 # ★ 重要：破除瀏覽器快取——把 index.html 裡的 ?v=N 全部 +1
-#   （目前是 v=7，下次改成 v=8，再下次 v=9…）
+#   （目前是 v=8，下次改成 v=9，再下次 v=10…）
 #   可用這行一次全換（macOS）：
-sed -i '' 's/?v=7/?v=8/g' index.html
+sed -i '' 's/?v=8/?v=9/g' index.html
+# timer.html 的 css/js 有自己的 ?v=N（目前 v=3），改到計時器相關檔案時同樣 +1：
+sed -i '' 's/?v=3/?v=4/g' timer.html
 
 git add -A
 git commit -m "說明這次改了什麼"
